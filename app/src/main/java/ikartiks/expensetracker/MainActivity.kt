@@ -45,6 +45,11 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
 
         val addViewModel = ViewModelProviders.of(this).get(AddViewModel::class.java)
         val db= AppDatabase.getInstance(this)
+
+        if(addViewModel.applicationX==null){
+            log("it is null")
+        }
+        addViewModel.applicationX.let { log(application.toString()+" not null") }
         addViewModel.tasksRepository = TasksRepository(db.appDao(),AppExecutors())
         addViewModel.getViews()
 

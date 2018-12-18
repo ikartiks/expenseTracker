@@ -19,7 +19,7 @@ class TasksRepository(val appDao: AppDao, val appExecutors: AppExecutors) {
         val runnable = Runnable {
             list = appDao.findTransactionDetails(accounId)
             appExecutors.mainThread().execute{
-                if(list.size>0)
+                if(list.isNotEmpty())
                     loadTasksCallback.onTasksLoaded(list)
                 else
                     loadTasksCallback.onDataNotAvailable()
