@@ -18,6 +18,7 @@ import ikartiks.expensetracker.entities.Account
 import ikartiks.expensetracker.entities.TransactionDetails
 import ikartiks.expensetracker.entities.TransactionType
 import ikartiks.expensetracker.viewmodel.AddViewModel
+import ikartiks.expensetracker.viewmodel.ViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -43,14 +44,15 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val addViewModel = ViewModelProviders.of(this).get(AddViewModel::class.java)
         val db= AppDatabase.getInstance(this)
-
-        if(addViewModel.applicationX==null){
-            log("it is null")
-        }
+        val tasksRepository = TasksRepository(db.appDao(),AppExecutors())
+        val factory = ViewModelFactory(application,tasksRepository)
+        //val addViewModel = ViewModelProviders.of(this).get(AddViewModel::class.java)
+        // note we are calling get method on factory and not onCreate, so it will decide if
+        // it wants to reuse old instance or create new using create method in our factory
+        val addViewModel = ViewModelProviders.of(this, factory).get(AddViewModel::class.java)
+        //below line prints and i also get my logs for fuel data.
         addViewModel.applicationX.let { log(application.toString()+" not null") }
-        addViewModel.tasksRepository = TasksRepository(db.appDao(),AppExecutors())
         addViewModel.getViews()
 
     }

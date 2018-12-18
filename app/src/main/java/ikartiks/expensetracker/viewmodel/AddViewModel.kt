@@ -6,14 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import ikartiks.expensetracker.dao.TasksRepository
 import ikartiks.expensetracker.entities.ViewTransactionDetails
 
-class AddViewModel (application: Application) : AndroidViewModel(application) {
+class AddViewModel (val applicationX: Application,val tasksRepository : TasksRepository) : AndroidViewModel(applicationX) {
 
-    var applicationX:Application? = null
-
-    var tasksRepository : TasksRepository? = null
-    init {
-        applicationX= application
-    }
 
     // for this example to work, ideally getviews should also take a callback
     //based on that callback data should be updated on the view
@@ -22,7 +16,7 @@ class AddViewModel (application: Application) : AndroidViewModel(application) {
 
 
 
-        tasksRepository?.getTransactionViewDetails(1,object :TasksRepository.LoadTasksCallback{
+        tasksRepository.getTransactionViewDetails(1,object :TasksRepository.LoadTasksCallback{
 
             override fun onDataNotAvailable() {
             }
