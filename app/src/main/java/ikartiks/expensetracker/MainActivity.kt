@@ -1,30 +1,33 @@
 package ikartiks.expensetracker
 
+import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import androidx.lifecycle.ViewModelProviders
-import androidx.room.Room
+import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
-import ikartiks.expensetracker.entities.Account
-import ikartiks.expensetracker.entities.TransactionDetails
-import ikartiks.expensetracker.entities.TransactionType
-import ikartiks.expensetracker.viewmodel.AddViewModel
+import ikartiks.expensetracker.entities.ViewTransactionDetails
+import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
+import io.reactivex.Observer
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener {
 
 
+    private val disposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,8 +35,7 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
+            startActivity(Intent(this,AddTransactionActivity::class.java))
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -47,19 +49,68 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         val db= AppDatabase.getInstance(this)
         val tasksRepository = TasksRepository(db.appDao(),AppExecutors())
         val factory = ViewModelFactory(application,tasksRepository)
-        //val addViewModel = ViewModelProviders.of(this).get(AddViewModel::class.java)
+        //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if
         // it wants to reuse old instance or create new using create method in our factory
-        val addViewModel = ViewModelProviders.of(this, factory).get(AddViewModel::class.java)
+        val viewModel = ViewModelProviders.of(this, factory).get(MainViewModel::class.java)
         //below line prints and i also get my logs for fuel data.
-        addViewModel.applicationX.let { log(application.toString()+" not null") }
-        addViewModel.getViews()
+        //addViewModel.applicationX.let { log(application.toString()+" not null") }
+        //addViewModel.getViews()
+
+        val list = ArrayList<ViewTransactionDetails>()
+        val adapter = GroupsRecyclerAdapter(list)
+        recyclerView.adapter = adapter
+
+
+        //note subscribe function returns disposable
+        disposable.add(viewModel.getViews(1)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+
+                // if you just want diff of 2 lists, use DiffUtils to get delta
+                //https://developer.android.com/reference/android/support/v7/util/DiffUtil
+                list.clear()
+                list.addAll(it)
+                adapter.notifyDataSetChanged()
+            })
+
+
+
+
+//        viewModel.getViewsObservable()
+//            .subscribeOn(Schedulers.io())
+//            .observeOn(AndroidSchedulers.mainThread())
+//            .subscribe (getAnimalsObserver())
+
 
     }
 
-    override fun onPostCreate(savedInstanceState: Bundle?) {
-        super.onPostCreate(savedInstanceState)
+//    fun getAnimalsObserver(): Observer<ArrayList<ViewTransactionDetails>> {
+//        return object: Observer<ArrayList<ViewTransactionDetails>> {
+//
+//            override fun onSubscribe(d: Disposable) {
+//                disposable.add(d)
+//            }
+//
+//            override fun onNext(t: ArrayList<ViewTransactionDetails>) {
+//
+//            }
+//
+//            override fun onError(e: Throwable) {
+//
+//            }
+//
+//            override fun onComplete() {
+//
+//            }
+//        };
+//    }
 
+
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.clear()
     }
 
     override fun onBackPressed() {

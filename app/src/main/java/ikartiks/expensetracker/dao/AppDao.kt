@@ -8,6 +8,7 @@ import ikartiks.expensetracker.entities.Account
 import ikartiks.expensetracker.entities.TransactionDetails
 import ikartiks.expensetracker.entities.TransactionType
 import ikartiks.expensetracker.entities.ViewTransactionDetails
+import io.reactivex.Flowable
 import java.util.*
 
 @Dao
@@ -22,9 +23,9 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertTransactionDetails(vararg transactionDetails: TransactionDetails)
 
-    @Query("SELECT * FROM viewTransactionDetails " +
-            "WHERE  " +//transactionDetailsDate BETWEEN :from AND :to
-            " transactionDetailsAccountId = :accountId")//and
+    //transactionDetailsDate BETWEEN :from AND :to
+    //and transactionDetailsAccountId = :accountId
+    @Query("SELECT * FROM viewTransactionDetails WHERE transactionDetailsAccountId = :accountId")
     fun findTransactionDetails(accountId:Int): List<ViewTransactionDetails>//from: Date?, to: Date?,
 
     @Query("SELECT * FROM account")
@@ -35,4 +36,10 @@ interface AppDao {
 
     @Query("SELECT * FROM transactionDetails")
     fun loadAllTransactionDetails(): Array<TransactionDetails>
+
+    @Query("SELECT * FROM viewTransactionDetails WHERE transactionDetailsAccountId = :accountId")
+    fun findTransactionDetailsFlowable(accountId:Int): Flowable<List<ViewTransactionDetails>>//from: Date?, to: Date?,
+
+
+
 }
