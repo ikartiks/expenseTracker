@@ -53,4 +53,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+
+    //note progaurd rules not added for okhhtp and retofit now
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    // below is required for kotlin at runtime - ActivityBase::class.qualifiedName+" "+this.localClassName, "" + message)
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
 }
