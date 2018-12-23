@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProviders
 import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
+import ikartiks.expensetracker.entities.Repo
 import ikartiks.expensetracker.entities.ViewTransactionDetails
 import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
@@ -23,6 +24,8 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -66,6 +69,21 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         disposable.add(viewModel.getViews(1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
+            .map (object : io.reactivex.functions.Function<List<ViewTransactionDetails>, List<ViewTransactionDetails>> {
+
+                override fun apply(t: List<ViewTransactionDetails>): List<ViewTransactionDetails> {
+                    Collections.sort(t, object : Comparator<ViewTransactionDetails> {
+                        override fun compare(n1: ViewTransactionDetails, n2: ViewTransactionDetails): Int {
+                            return  (n2.transactionDetailsDate!!.time - n1.transactionDetailsDate!!.time).toInt()
+                        }
+                    })
+                    // optionally filter here, since filter wont work
+                    val b = t as ArrayList
+                    b.removeAt(0)
+                    return b
+                }
+
+            })
             .subscribe {
 
                 // if you just want diff of 2 lists, use DiffUtils to get delta
