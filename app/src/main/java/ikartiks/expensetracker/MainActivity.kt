@@ -12,6 +12,7 @@ import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
 import ikartiks.expensetracker.entities.ViewTransactionDetails
+import ikartiks.expensetracker.executors.AppExecutors
 import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers

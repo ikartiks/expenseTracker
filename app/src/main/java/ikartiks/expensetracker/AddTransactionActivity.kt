@@ -1,16 +1,14 @@
 package ikartiks.expensetracker
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
 import ikartiks.expensetracker.entities.TransactionDetails
+import ikartiks.expensetracker.executors.AppExecutors
 import ikartiks.expensetracker.viewmodel.AddTransactionViewModel
-import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
