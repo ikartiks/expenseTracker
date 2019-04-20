@@ -48,6 +48,11 @@ class MainViewModel (val applicationX: Application, val tasksRepository : TasksR
 //        return observable
 //    }
 
+    fun insertDefaults(){
+        tasksRepository.insertDefaultAccount()
+        tasksRepository.insertDefaultTransactionType()
+    }
+
     fun getViews( accountId:Int): Flowable<List<ViewTransactionDetails>> {
         return tasksRepository.getTransactionViewDetails(accountId)
     }

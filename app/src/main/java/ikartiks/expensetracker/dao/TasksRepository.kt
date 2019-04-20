@@ -4,7 +4,8 @@ import ikartiks.expensetracker.AppExecutors
 import ikartiks.expensetracker.entities.ViewTransactionDetails
 import io.reactivex.Flowable
 import android.content.ClipData.Item
-
+import ikartiks.expensetracker.entities.Account
+import ikartiks.expensetracker.entities.TransactionType
 
 
 class TasksRepository(val appDao: AppDao, val appExecutors: AppExecutors) {
@@ -39,5 +40,19 @@ class TasksRepository(val appDao: AppDao, val appExecutors: AppExecutors) {
         return appDao.findTransactionDetailsFlowable(accounId)
         //val abc = appDao.findTransactionDetailsFlowable(accounId)
         //return abc.blockingFirst()
+    }
+
+    fun insertDefaultAccount(){
+        val runnable = Runnable {
+            appDao.insertAccount(Account(1,"Default Account"))
+        }
+        appExecutors.diskIO().execute(runnable)
+    }
+
+    fun insertDefaultTransactionType(){
+        val runnable = Runnable {
+            appDao.insertTransactionType(TransactionType(1, "fuel", "expense"))
+        }
+        appExecutors.diskIO().execute(runnable)
     }
 }

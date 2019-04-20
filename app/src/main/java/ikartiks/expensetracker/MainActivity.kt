@@ -2,7 +2,6 @@ package ikartiks.expensetracker
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.navigation.NavigationView
 import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -12,14 +11,11 @@ import androidx.lifecycle.ViewModelProviders
 import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
-import ikartiks.expensetracker.entities.Repo
 import ikartiks.expensetracker.entities.ViewTransactionDetails
 import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -38,7 +34,7 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
 
         fab.setOnClickListener { view ->
-            startActivity(Intent(this,AddTransactionActivity::class.java))
+            startActivity(Intent(this, AddTransactionActivity::class.java))
         }
 
         val toggle = ActionBarDrawerToggle(
@@ -49,9 +45,9 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val db= AppDatabase.getInstance(this)
-        val tasksRepository = TasksRepository(db.appDao(),AppExecutors())
-        val factory = ViewModelFactory(application,tasksRepository)
+        val db = AppDatabase.getInstance(this)
+        val tasksRepository = TasksRepository(db.appDao(), AppExecutors())
+        val factory = ViewModelFactory(application, tasksRepository)
         //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if
         // it wants to reuse old instance or create new using create method in our factory
@@ -59,6 +55,11 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         //below line prints and i also get my logs for fuel data.
         //addViewModel.applicationX.let { log(application.toString()+" not null") }
         //addViewModel.getViews()
+
+        if (!getBoolean(isAppInitialisedWithDefaultAccount, false)) {
+            putBoolean(isAppInitialisedWithDefaultAccount, true)
+            viewModel.insertDefaults()
+        }
 
         val list = ArrayList<ViewTransactionDetails>()
         val adapter = GroupsRecyclerAdapter(list)
@@ -69,20 +70,18 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
         disposable.add(viewModel.getViews(1)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .map (object : io.reactivex.functions.Function<List<ViewTransactionDetails>, List<ViewTransactionDetails>> {
-
+            .map(object : io.reactivex.functions.Function<List<ViewTransactionDetails>, List<ViewTransactionDetails>> {
                 override fun apply(t: List<ViewTransactionDetails>): List<ViewTransactionDetails> {
                     Collections.sort(t, object : Comparator<ViewTransactionDetails> {
                         override fun compare(n1: ViewTransactionDetails, n2: ViewTransactionDetails): Int {
-                            return  (n2.transactionDetailsDate!!.time - n1.transactionDetailsDate!!.time).toInt()
+                            return (n2.transactionDetailsDate!!.time - n1.transactionDetailsDate!!.time).toInt()
                         }
                     })
                     // optionally filter here, since filter wont work
-                    val b = t as ArrayList
-                    b.removeAt(0)
-                    return b
+                    //val b = t as ArrayList
+                    //b.removeAt(0)
+                    return t
                 }
-
             })
             .subscribe {
 
@@ -92,8 +91,6 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
                 list.addAll(it)
                 adapter.notifyDataSetChanged()
             })
-
-
 
 
 //        viewModel.getViewsObservable()
@@ -180,5 +177,9 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    companion object {
+        val isAppInitialisedWithDefaultAccount = "isAppInitialisedWithDefaultAccount"
     }
 }

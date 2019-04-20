@@ -28,9 +28,9 @@ class AddTransactionActivity : ActivityBase() {
         setContentView(R.layout.activity_add_transaction)
         setSupportActionBar(toolbar)
 
-        val db= AppDatabase.getInstance(this)
-        val tasksRepository = TasksRepository(db.appDao(),AppExecutors())
-        val factory = ViewModelFactory(application,tasksRepository)
+        val db = AppDatabase.getInstance(this)
+        val tasksRepository = TasksRepository(db.appDao(), AppExecutors())
+        val factory = ViewModelFactory(application, tasksRepository)
         //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if
         // it wants to reuse old instance or create new using create method in our factory
@@ -40,21 +40,22 @@ class AddTransactionActivity : ActivityBase() {
         fab.setOnClickListener { view ->
             run {
 
-                view.visibility=View.GONE
+                view.visibility = View.GONE
 
                 val details = TransactionDetails()
-                details.amount=amount.text.toString().toInt()
-                details.transactionTypeId=1
-                details.accountId=1
-                details.note=note.text.toString()
+                details.amount = amount.text.toString().toInt()
+                details.transactionTypeId = 1
+                details.accountId = 1
+                details.note = note.text.toString()
 
-            disposable.add(viewModel.addTransaction(details)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe{ view.visibility = View.VISIBLE
-                    Snackbar.make(view, "Expense added", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show()
-                })
+                disposable.add(viewModel.addTransaction(details)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe {
+                        view.visibility = View.VISIBLE
+                        Snackbar.make(view, "Expense added", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show()
+                    })
             }
         }
     }

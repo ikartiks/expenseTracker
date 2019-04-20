@@ -37,6 +37,7 @@ dependencies {
     def rxKotlinVersion = "2.2.0"
     def rxJavaVersion = "2.2.4"
     def rxAndroidVersion = "2.1.0"
+    def daggerVersion = "2.22.1"
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
@@ -60,4 +61,14 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     // below is required for kotlin at runtime - ActivityBase::class.qualifiedName+" "+this.localClassName, "" + message)
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    implementation "com.google.dagger:dagger-android:$daggerVersion"
+    implementation "com.google.dagger:dagger-android-support:$daggerVersion" // if you use the support libraries
+    annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
+}
+
+gradle.projectsEvaluated {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xmaxerrs" << "500" // or whatever number you want
+    }
 }
