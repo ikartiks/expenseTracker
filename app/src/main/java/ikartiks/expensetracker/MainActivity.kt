@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProviders
 import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
+import ikartiks.expensetracker.di.ContextModule
+import ikartiks.expensetracker.di.DaggerAppComponent
 import ikartiks.expensetracker.entities.ViewTransactionDetails
 import ikartiks.expensetracker.executors.AppExecutors
 import ikartiks.expensetracker.viewmodel.MainViewModel
@@ -22,12 +24,20 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedListener {
 
 
     private val disposable = CompositeDisposable()
+
+    @Inject
+    lateinit var appExecutors:AppExecutors
+
+    @Inject
+    lateinit var appDatabase: AppDatabase
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +56,16 @@ class MainActivity : ActivityBase(), NavigationView.OnNavigationItemSelectedList
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val db = AppDatabase.getInstance(this)
-        val tasksRepository = TasksRepository(db.appDao(), AppExecutors())
+        var app = application as CustomApplication
+        app.appComponent.inject(this)
+
+//        val appComponent = DaggerAppComponent.builder().contextModule(ContextModule(this))
+//            .build()
+//        appComponent.inject(this)
+//        appExecutors = appComponent.getAppExecutor()... no inject in field in this case
+
+        //val db = AppDatabase.getInstance(this)
+        val tasksRepository = TasksRepository(appDatabase.appDao(), appExecutors)
         val factory = ViewModelFactory(application, tasksRepository)
         //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if

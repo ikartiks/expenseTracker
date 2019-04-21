@@ -3,8 +3,9 @@ package ikartiks.expensetracker.executors
 import androidx.annotation.NonNull
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
+import javax.inject.Inject
 
-class DiskIOThreadExecutor : Executor {
+class DiskIOThreadExecutor @Inject constructor() : Executor {
 
     private val mDiskIO: Executor
 

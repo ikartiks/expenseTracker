@@ -6,6 +6,7 @@ import com.google.android.material.snackbar.Snackbar
 import androidx.lifecycle.ViewModelProviders
 import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
+import ikartiks.expensetracker.di.DaggerAppComponent
 import ikartiks.expensetracker.entities.TransactionDetails
 import ikartiks.expensetracker.executors.AppExecutors
 import ikartiks.expensetracker.viewmodel.AddTransactionViewModel
@@ -16,18 +17,31 @@ import io.reactivex.schedulers.Schedulers
 
 import kotlinx.android.synthetic.main.activity_add_transaction.*
 import kotlinx.android.synthetic.main.content_add_transaction.*
+import javax.inject.Inject
 
 class AddTransactionActivity : ActivityBase() {
 
     val disposable = CompositeDisposable()
+
+    @Inject
+    lateinit var appExecutors:AppExecutors
+
+    @Inject
+    lateinit var appDatabase: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_transaction)
         setSupportActionBar(toolbar)
 
-        val db = AppDatabase.getInstance(this)
-        val tasksRepository = TasksRepository(db.appDao(), AppExecutors())
+        var app = application as CustomApplication
+        app.appComponent.inject(this)
+
+//        DaggerAppComponent.create().inject(this)
+        //appExecutors = appComponent.getAppExecutor()
+
+        //val db = AppDatabase.getInstance(this)
+        val tasksRepository = TasksRepository(appDatabase.appDao(), appExecutors)
         val factory = ViewModelFactory(application, tasksRepository)
         //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if
