@@ -24,10 +24,7 @@ class AddTransactionActivity : ActivityBase() {
     val disposable = CompositeDisposable()
 
     @Inject
-    lateinit var appExecutors:AppExecutors
-
-    @Inject
-    lateinit var appDatabase: AppDatabase
+    lateinit var tasksRepository: TasksRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +38,7 @@ class AddTransactionActivity : ActivityBase() {
         //appExecutors = appComponent.getAppExecutor()
 
         //val db = AppDatabase.getInstance(this)
-        val tasksRepository = TasksRepository(appDatabase.appDao(), appExecutors)
+        //val tasksRepository = TasksRepository(appDatabase.appDao(), appExecutors)
         val factory = ViewModelFactory(application, tasksRepository)
         //val addViewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         // note we are calling get method on factory and not onCreate, so it will decide if
