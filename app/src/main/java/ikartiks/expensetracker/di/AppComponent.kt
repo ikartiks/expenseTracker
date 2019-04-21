@@ -5,7 +5,7 @@ import ikartiks.expensetracker.AddTransactionActivity
 import ikartiks.expensetracker.MainActivity
 import ikartiks.expensetracker.executors.AppExecutors
 
-@Component(modules = arrayOf(ContextModule::class, AppDatabaseModule::class))
+@Component(modules = arrayOf(ContextModule::class, OtherModules::class))
 interface AppComponent {
 
     fun getAppExecutor(): AppExecutors

@@ -2,19 +2,15 @@ package ikartiks.expensetracker
 
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.navigation.NavigationView
-import androidx.core.view.GravityCompat
-import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.navigation.NavigationView
 import ikartiks.expensetracker.adapter.GroupsRecyclerAdapter
-import ikartiks.expensetracker.dao.AppDatabase
 import ikartiks.expensetracker.dao.TasksRepository
-import ikartiks.expensetracker.di.ContextModule
-import ikartiks.expensetracker.di.DaggerAppComponent
 import ikartiks.expensetracker.entities.ViewTransactionDetails
-import ikartiks.expensetracker.executors.AppExecutors
 import ikartiks.expensetracker.viewmodel.MainViewModel
 import ikartiks.expensetracker.viewmodel.ViewModelFactory
 import io.reactivex.android.schedulers.AndroidSchedulers

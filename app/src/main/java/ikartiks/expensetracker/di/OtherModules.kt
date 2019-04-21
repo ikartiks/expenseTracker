@@ -8,7 +8,7 @@ import ikartiks.expensetracker.dao.TasksRepository
 import ikartiks.expensetracker.executors.AppExecutors
 
 @Module
-class AppDatabaseModule {
+class OtherModules {
 
     //since context is already being provided by another module, dagger automatically gets it from there
     @Provides
