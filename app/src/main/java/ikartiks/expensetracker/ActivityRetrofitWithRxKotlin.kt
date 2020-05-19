@@ -2,28 +2,17 @@ package ikartiks.expensetracker
 
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
-import androidx.appcompat.app.AppCompatActivity;
-
+import ikartiks.expensetracker.entities.Repo
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableSingleObserver
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_retrofit_with_rx_kotlin.*
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
-import java.io.IOException
-import android.text.method.TextKeyListener.clear
-import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import ikartiks.expensetracker.entities.Repo
-import io.reactivex.observers.DisposableSingleObserver
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Predicate
-import io.reactivex.schedulers.Schedulers
-import io.reactivex.internal.util.NotificationLite.disposable
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.StringBuilder
 import java.util.*
 
 
